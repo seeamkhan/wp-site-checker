@@ -27,7 +27,7 @@ def wp_checker():
     message.append("Site tested at %s" %start_time)
     # message.append('%s site is checking, please wait...' %site_name)
     print '%s site is checking, please wait...' %site_name
-    wp_url = "https://stg.rethinkhealth.org"
+    wp_url = "http://rth.dev.lin.panth.com"
 
     # Site is UP checking
     status = "Unknown"
@@ -100,7 +100,7 @@ def wp_checker():
             print site_is_up_message
 
             # Admin login test
-            driver.get("https://stg.rethinkhealth.org/wp-admin")
+            driver.get("http://rth.dev.lin.panth.com/wp-admin")
             login_email_field = 'user_login'
             login_pass_field = 'user_pass'
             login_button = 'wp-submit'
@@ -110,6 +110,9 @@ def wp_checker():
             credentials_file = os.path.join(os.path.dirname(__file__), 'login.credentials')
             username = Conf_Reader.get_value(credentials_file, 'LOGIN_USER')
             password = Conf_Reader.get_value(credentials_file, 'LOGIN_PASSWORD')
+            print username
+            print password
+
 
             try:
                 WebDriverWait(driver, 10).until(
@@ -200,6 +203,10 @@ def email_sender(wp_checker_log):
     email_log = ''
     message = []
     email_body = wp_checker_log
+    # Get username and password from the credential file
+    credentials_file = os.path.join(os.path.dirname(__file__), 'login.credentials')
+    email_username = Conf_Reader.get_value(credentials_file, 'EMAIL_USER')
+    email_password = Conf_Reader.get_value(credentials_file, 'EMAIL_PASSWORD')
 
     message.append('The automated email is sending, please wait...')
     print 'The automated email is sending, please wait...'
@@ -211,7 +218,7 @@ def email_sender(wp_checker_log):
 
     # enter email
     driver.find_element_by_id('Email').clear()
-    driver.find_element_by_id('Email').send_keys('panth.me')
+    driver.find_element_by_id('Email').send_keys(email_username)
 
     # click next
     driver.find_element_by_id('next').click()
@@ -219,7 +226,7 @@ def email_sender(wp_checker_log):
 
     # enter password
     driver.find_element_by_id('Passwd').clear()
-    driver.find_element_by_id('Passwd').send_keys('password')
+    driver.find_element_by_id('Passwd').send_keys(email_password)
 
     # click login
     driver.find_element_by_id('signIn').click()
@@ -266,7 +273,7 @@ def email_sender(wp_checker_log):
     except:
         message.append('To field not found, maybe composer box load failed!')
         print 'To field not found, maybe composer box load failed!'
-    send_to_emails = 'panth.me@gmail.com; one.testemail@gmail.com'
+    send_to_emails = 'panth.me@gmail.com; jilani@dev.panth.com'
     driver.find_element_by_xpath(to_field).clear()
     driver.find_element_by_xpath(to_field).send_keys(send_to_emails)
     driver.find_element_by_xpath(subject_field).clear()
